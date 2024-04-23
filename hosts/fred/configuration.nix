@@ -131,7 +131,7 @@
     enable = true;
     settings = {
       X11Forwarding = true;
-      PermitRootLogin = "no";
+      PermitRootLogin = "yes";
       PasswordAuthentication = false;
       AllowTcpForwarding = true;
     };

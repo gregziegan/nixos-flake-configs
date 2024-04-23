@@ -12,7 +12,7 @@
       modules = [
         # Import the previous configuration.nix we used,
         # so the old configuration file still takes effect
-        ./configuration.nix
+        ./hosts/fred/configuration.nix
       ];
     };
   };

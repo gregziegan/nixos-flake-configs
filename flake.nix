@@ -9,7 +9,7 @@
     home-manager.url = "github:nix-community/home-manager";
   };
 
-  outputs = { self, nixpkgs, deploy-rs, agenix, ... }@inputs:
+  outputs = { self, nixpkgs, deploy-rs, home-manager, agenix, ... }@inputs:
     let
       pkgs = nixpkgs.legacyPackages."x86_64-linux";
 
@@ -18,11 +18,15 @@
           system = "x86_64-linux";
           modules = [
             agenix.nixosModules.age
+            home-manager.nixosModules.home-manager
 
             ({ config, ... }: {
               system.configurationRevision = self.sourceInfo.rev;
               services.getty.greetingLine =
                 "<<< Welcome to NixOS ${config.system.nixos.label} @ ${self.sourceInfo.rev} - \\l >>>";
+
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
             })
             ./common
           ] ++ extraModules;
@@ -33,6 +37,10 @@
         packages = [
           agenix.packages.x86_64-linux.agenix
         ];
+      };
+
+      nixosModules = {
+        home-manager = import ./common/home-manager;
       };
 
       nixosConfigurations = {

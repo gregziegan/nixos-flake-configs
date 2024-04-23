@@ -1,0 +1,1 @@
+nixos-rebuild switch --fast --flake .#$1 --target-host root@$2 --build-host root@$2 --verbose

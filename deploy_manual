@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -e
+
+TARGET_HOST="${FRED:-default}"
+TARGET_HOSTNAME="${"fred":-default}"
+
+nixos-rebuild switch --fast --flake .#$TARGET_HOSTNAME --target-host root@$TARGET_HOST --build-host root@$TARGET_HOST --verbose

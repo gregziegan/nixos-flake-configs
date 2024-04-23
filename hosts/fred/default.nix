@@ -42,20 +42,6 @@
     LC_TIME = "en_US.UTF-8";
   };
 
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
-
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
-    #media-session.enable = true;
-  };
-
   users.users.gziegan = {
     isNormalUser = true;
     description = "Greg Ziegan";
@@ -78,7 +64,6 @@
 
   environment.systemPackages = with pkgs; [
     vim
-    git
     wget
   ];
 
@@ -93,17 +78,17 @@
     openFirewall = true;
   };
 
-  services.nginx = {
-    enable = true;
-    virtualHosts.${dnsName} = {
-      default = true;
-      locations."/" = {
-        proxyPass = "http://127.0.0.1:8080";
-      };
-      addSSL = true;
-      enableACME = true;
-    };
-  };
+  # services.nginx = {
+  #   enable = true;
+  #   virtualHosts.${dnsName} = {
+  #     default = true;
+  #     locations."/" = {
+  #       proxyPass = "http://127.0.0.1:8080";
+  #     };
+  #     addSSL = true;
+  #     enableACME = true;
+  #   };
+  # };
 
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [ 80 443 ];
@@ -118,5 +103,18 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "23.11"; # Did you read the comment?
+
+  system.autoUpgrade = {
+    flake = "github:gregziegan/nixos-flake-configs";
+    randomizedDelaySec = "15m";
+    dates = "daily";
+
+    operation = "boot";
+    allowReboot = true;
+    rebootWindow = {
+      lower = "22:00";
+      upper = "23:59";
+    };
+  };
 
 }

@@ -19,5 +19,5 @@
 
   programs.atuin.enable = true;
 
-  home.stateVersion = "24.05";
+  home.stateVersion = "23.11";
 }

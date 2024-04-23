@@ -100,9 +100,9 @@
       firefox
       chromium
       vscode
-      #  thunderbird
     ];
   };
+  users.users.root.openssh.authorizedKeys.keys = config.users.users.gziegan.openssh.authorizedKeys.keys;
 
   nixpkgs.config.allowUnfree = true;
 
@@ -111,7 +111,7 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+    vim
     git
     wget
   ];
@@ -141,7 +141,6 @@
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [ 80 443 ];
   networking.firewall.allowedUDPPorts = [ 80 443 ];
-  networking.firewall.logRefusedPackets = true;
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
 

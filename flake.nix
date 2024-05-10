@@ -51,7 +51,7 @@
       };
 
       deploy.nodes.fred = {
-        hostname = "192.168.86.28";
+        hostname = "192.168.86.32";
         sshUser = "root";
         fastConnection = true;
 

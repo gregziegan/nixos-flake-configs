@@ -45,17 +45,30 @@
     openFirewall = true;
   };
 
+  # services.red-door-collective.enable = true;
+
   # services.nginx = {
   #   enable = true;
-  #   virtualHosts.${dnsName} = {
-  #     default = true;
-  #     locations."/" = {
-  #       proxyPass = "http://127.0.0.1:8080";
+  #   virtualHosts = {
+  #     "reddoorcollective.online" = {
+  #       default = true;
+  #       locations."/" = {
+  #         proxyPass = "http://127.0.0.1:8080";
+  #       };
+  #       addSSL = true;
+  #       enableACME = true;
   #     };
-  #     addSSL = true;
-  #     enableACME = true;
   #   };
   # };
+
+  services.postgresql = {
+    enable = true;
+    package = pkgs.postgresql_16;
+    initialScript = pkgs.writeText "rdc-init.sql" ''
+      CREATE ROLE "fred-rdc" WITH LOGIN PASSWORD 'rdc' CREATEDB;
+      CREATE DATABASE "fred-rdc" WITH OWNER "fred-rdc";
+    '';
+  };
 
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [ 80 443 ];

@@ -47,19 +47,20 @@
 
   # services.red-door-collective.enable = true;
 
-  # services.nginx = {
-  #   enable = true;
-  #   virtualHosts = {
-  #     "reddoorcollective.online" = {
-  #       default = true;
-  #       locations."/" = {
-  #         proxyPass = "http://127.0.0.1:8080";
-  #       };
-  #       addSSL = true;
-  #       enableACME = true;
-  #     };
-  #   };
-  # };
+  services.nginx = {
+    enable = true;
+    virtualHosts = {
+      "reddoorcollective.online" = {
+        default = true;
+        # locations."/" = {
+        #   proxyPass = "http://127.0.0.1:8080";
+        # };
+        root = "/var/www/rdc-test";
+        addSSL = true;
+        enableACME = true;
+      };
+    };
+  };
 
   services.postgresql = {
     enable = true;

@@ -55,7 +55,7 @@
         # locations."/" = {
         #   proxyPass = "http://127.0.0.1:8080";
         # };
-        root = "/var/www/reddoorcollective.online";
+        root = "/srv/red-door-collective/run";
         addSSL = true;
         enableACME = true;
       };

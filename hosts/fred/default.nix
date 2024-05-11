@@ -62,6 +62,8 @@
     };
   };
 
+  security.acme.acceptTerms = true;
+
   services.postgresql = {
     enable = true;
     package = pkgs.postgresql_16;

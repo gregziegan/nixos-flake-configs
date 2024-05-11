@@ -55,14 +55,17 @@
         # locations."/" = {
         #   proxyPass = "http://127.0.0.1:8080";
         # };
-        root = "/var/www/rdc-test";
+        root = "/var/www/reddoorcollective.online";
         addSSL = true;
         enableACME = true;
       };
     };
   };
 
-  security.acme.acceptTerms = true;
+  security.acme = {
+    acceptTerms = true;
+    defaults.email = "greg.ziegan@gmail.com";
+  };
 
   services.postgresql = {
     enable = true;

@@ -3,5 +3,5 @@
 with lib;
 
 {
-  imports = [ ./gziegan.nix ./other.nix ];
+  imports = [ ./gziegan.nix ];
 }

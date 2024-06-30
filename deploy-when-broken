@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+set -e
+
+nix run github:serokell/deploy-rs -- --remote-build --skip-checks --rollback-succeeded false -k --auto-rollback false

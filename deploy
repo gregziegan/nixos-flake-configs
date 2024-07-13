@@ -2,4 +2,10 @@
 
 set -e
 
-nix run github:serokell/deploy-rs -- --remote-build --skip-checks "$@"
+if [[ $# == 0 ]]; then
+  nix run github:serokell/deploy-rs -- --remote-build --skip-checks "$@"
+else
+  target=$1
+  shift;
+  nix run github:serokell/deploy-rs .#$target -- --remote-build --skip-checks "$@"
+fi

@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }: {
   imports = [
@@ -31,6 +32,9 @@
 
   services.red-door-collective.rdc-website = with config.settings; {
     enable = true;
+
+    version = inputs.rdc-website.shortRev;
+
     secretFiles = {
       flask_secret_key = "/var/lib/rdc-website/flask-secret-key";
       password_salt = "/var/lib/rdc-website/password-salt";
@@ -66,40 +70,6 @@
       ROLLBAR_CLIENT_TOKEN = "@rollbar_client_token@";
       CASELINK_USERNAME = "@caselink_username@";
       CASELINK_PASSWORD = "@caselink_password@";
-
-      DATA_DIR = "./data";
-      DEBUG = false;
-      ENV = "production";
-      FLASK_APP = "rdc_website.app";
-      FLASK_DEBUG = false;
-      MAIL_DEBUG = false;
-      MAIL_USE_SSL = false;
-      MAIL_USE_TLS = true;
-      RUN_JOBS = false;
-      SECURITY_AUTO_LOGIN_AFTER_CONFIRM = false;
-      SECURITY_CHANGEABLE = true;
-      SECURITY_CONFIRMABLE = true;
-      SECURITY_CONFIRM_ERROR_VIEW = "/confirm-error";
-      SECURITY_CSRF_COOKIE = {key = "XSRF-TOKEN";};
-      # SECURITY_CSRF_COOKIE_NAME = "XSRF-TOKEN";
-      SECURITY_CSRF_IGNORE_UNAUTH_ENDPOINTS = true;
-      SECURITY_CSRF_PROTECT_MECHANISMS = ["session" "basic"];
-      SECURITY_FLASH_MESSAGES = false;
-      SECURITY_POST_CONFIRM_VIEW = "/confirmed";
-      SECURITY_RECOVERABLE = true;
-      SECURITY_REDIRECT_BEHAVIOR = "spa";
-      SECURITY_REDIRECT_HOST = "reddoorcollective.org";
-      SECURITY_RESET_ERROR_VIEW = "/reset-password";
-      SECURITY_RESET_VIEW = "/reset-password";
-      SECURITY_TRACKABLE = true;
-      SECURITY_URL_PREFIX = "/api/v1/accounts";
-      SQLALCHEMY_TRACK_MODIFICATIONS = false;
-      VERSION = "testing-deploy";
-      SQLALCHEMY_ENGINE_OPTIONS = {
-        pool_pre_ping = true;
-      };
-      WTF_CSRF_CHECK_DEFAULT = false;
-      WTF_CSRF_TIME_LIMIT = null;
     };
   };
 

@@ -1,5 +1,8 @@
-{ pkgs, config, ... }:
-let
+{
+  pkgs,
+  config,
+  ...
+}: let
   name = "Greg Ziegan";
   email = "greg.ziegan@gmail.com";
   commitTemplate = pkgs.writeTextFile {
@@ -8,17 +11,20 @@ let
       Signed-off-by: ${name} <${email}>
     '';
   };
-in
-{
-  imports = [ ../../home-manager ];
+in {
+  imports = [../../home-manager];
 
-  red-door-collective = {
-    htop.enable = true;
-    vim.enable = true;
+  # red-door-collective = {
+  #   htop.enable = true;
+  #   vim.enable = true;
+  # };
+
+  programs.bash.sessionVariables = {
+    SYSTEMD_COLORS = true;
   };
 
   services.lorri.enable = true;
-  home.packages = with pkgs; [ cachix niv nixfmt bind unzip ];
+  home.packages = with pkgs; [cachix niv nixfmt bind unzip];
 
   programs.direnv.enable = true;
   programs.direnv.nix-direnv.enable = true;
@@ -28,7 +34,7 @@ in
     enable = true;
     userName = name;
     userEmail = email;
-    ignores = [ "*~" "*.swp" "*.#" ];
+    ignores = ["*~" "*.swp" "*.#"];
     delta.enable = true;
     extraConfig = {
       commit.template = "${commitTemplate}";

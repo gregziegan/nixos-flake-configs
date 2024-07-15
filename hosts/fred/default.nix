@@ -36,8 +36,6 @@ in {
 
   nixpkgs.config.allowUnfree = true;
 
-  nixpkgs.overlays = [inputs.rdc-website.overlays.default];
-
   # Enable the OpenSSH daemon.
   services.openssh = {
     enable = true;
@@ -51,6 +49,7 @@ in {
 
   services.nginx.enable = true;
   services.red-door-collective.rdc-website.enable = true;
+  nixpkgs.overlays = [inputs.rdc-website.overlays.default];
 
   security.acme = {
     acceptTerms = true;
@@ -63,12 +62,7 @@ in {
     authentication = ''
       local rdc_website rdc_website md5
     '';
-    ensureDatabases = ["rdc_website"];
     ensureUsers = [
-      {
-        name = "rdc_website";
-        ensureDBOwnership = true;
-      }
       {
         name = "grafana";
       }

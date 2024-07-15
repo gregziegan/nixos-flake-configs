@@ -30,6 +30,16 @@
     };
   };
 
+  services.postgresql = {
+    ensureDatabases = ["rdc_website"];
+    ensureUsers = [
+      {
+        name = "rdc_website";
+        ensureDBOwnership = true;
+      }
+    ];
+  };
+
   services.red-door-collective.rdc-website = with config.settings; {
     version = inputs.rdc-website.shortRev;
 

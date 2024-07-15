@@ -16,6 +16,12 @@
     };
   };
 
+  services.postgresql.ensureUsers = [
+    {
+      name = "grafana";
+    }
+  ];
+
   services.grafana = {
     enable = true;
     settings.server = {

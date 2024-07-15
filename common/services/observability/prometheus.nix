@@ -6,6 +6,12 @@
 }: let
   hostName = config.networking.hostName;
 in {
+  services.postgresql.ensureUsers = [
+    {
+      name = "postgres_exporter";
+    }
+  ];
+
   services.prometheus = {
     enable = true;
     port = 9001;

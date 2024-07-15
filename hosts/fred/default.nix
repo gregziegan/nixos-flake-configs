@@ -62,14 +62,6 @@ in {
     authentication = ''
       local rdc_website rdc_website md5
     '';
-    ensureUsers = [
-      {
-        name = "grafana";
-      }
-      {
-        name = "postgres_exporter";
-      }
-    ];
   };
 
   # currently broken. should fix for one-stop rdc monitoring and db setup

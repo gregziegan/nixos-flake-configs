@@ -26,8 +26,6 @@ in {
     };
   };
 
-  services.red-door-collective.rdc-website.enable = true;
-
   networking.hostName = hostName;
 
   # Set your time zone.
@@ -40,11 +38,6 @@ in {
 
   nixpkgs.overlays = [inputs.rdc-website.overlays.default];
 
-  environment.systemPackages = with pkgs; [
-    vim
-    wget
-  ];
-
   # Enable the OpenSSH daemon.
   services.openssh = {
     enable = true;
@@ -56,18 +49,8 @@ in {
     openFirewall = true;
   };
 
-  services.nginx = {
-    enable = true;
-    virtualHosts.${config.services.grafana.settings.server.domain} = {
-      addSSL = true;
-      enableACME = true;
-      locations."/" = {
-        proxyPass = "http://${toString config.services.grafana.settings.server.http_addr}:${toString config.services.grafana.settings.server.http_port}";
-        proxyWebsockets = true;
-        recommendedProxySettings = true;
-      };
-    };
-  };
+  services.nginx.enable = true;
+  services.red-door-collective.rdc-website.enable = true;
 
   security.acme = {
     acceptTerms = true;

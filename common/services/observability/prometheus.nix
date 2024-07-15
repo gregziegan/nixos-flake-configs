@@ -17,14 +17,10 @@ in {
       };
       postgres = {
         enable = true;
-        # user = "postgres_exporter";
         openFirewall = true;
         dataSourceName = "user=postgres_exporter database=postgres host=/run/postgresql sslmode=disable";
-        # environmentFile = "/root/prometheus-postgres-exporter.env";
       };
       # nginx?
-      # python?
-      # statsd?
       # graphite?
     };
 

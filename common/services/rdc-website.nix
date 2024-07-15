@@ -17,7 +17,7 @@
       "reddoorcollective.org" = {
         default = true;
         locations."/api/" = {
-          proxyPass = "http://127.0.0.1:10000";
+          proxyPass = "http://127.0.0.1:${toString config.services.red-door-collective.rdc-website.port}";
         };
 
         locations."/" = {
@@ -31,8 +31,6 @@
   };
 
   services.red-door-collective.rdc-website = with config.settings; {
-    enable = true;
-
     version = inputs.rdc-website.shortRev;
 
     secretFiles = {

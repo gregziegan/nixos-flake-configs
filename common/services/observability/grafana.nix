@@ -4,6 +4,18 @@
   pkgs,
   ...
 }: {
+  services.nginx = {
+    virtualHosts.${config.services.grafana.settings.server.domain} = {
+      addSSL = true;
+      enableACME = true;
+      locations."/" = {
+        proxyPass = "http://${toString config.services.grafana.settings.server.http_addr}:${toString config.services.grafana.settings.server.http_port}";
+        proxyWebsockets = true;
+        recommendedProxySettings = true;
+      };
+    };
+  };
+
   services.grafana = {
     enable = true;
     settings.server = {

@@ -20,6 +20,7 @@
     nodejs-18_x
     btop
     toybox
+    vim
   ];
 
   # security.polkit.enable = true;

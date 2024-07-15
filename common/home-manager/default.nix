@@ -1,15 +1,11 @@
-{ ... }:
-
-{
+{...}: {
   imports = [
-    ./htop.nix
-    ./vim
   ];
 
   programs.git.lfs.enable = true;
 
   nixpkgs.config = {
-    allowBroken = true;
+    # allowBroken = true;
     allowUnfree = true;
 
     manual.manpages.enable = true;

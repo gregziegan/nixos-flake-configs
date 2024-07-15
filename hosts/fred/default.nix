@@ -10,6 +10,7 @@ in {
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
     inputs.rdc-website.nixosModules.default
+    ../../common/users
     ../../common/services/rdc-website.nix
     ../../common/services/observability
   ];

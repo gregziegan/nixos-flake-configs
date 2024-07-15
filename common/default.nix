@@ -9,6 +9,9 @@
   boot.tmp.cleanOnBoot = true;
   boot.kernelModules = [];
 
+  users.defaultUserShell = pkgs.zsh;
+  programs.zsh.enable = true;
+
   environment.systemPackages = with pkgs; [
     age
     minisign
@@ -16,6 +19,7 @@
     git
     nodejs-18_x
     btop
+    toybox
   ];
 
   # security.polkit.enable = true;

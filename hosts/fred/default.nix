@@ -143,9 +143,15 @@ in {
       };
       postgres = {
         enable = true;
+        # user = "postgres_exporter";
         openFirewall = true;
-        extraFlags = ["--auto-discover-databases"];
+        dataSourceName = "user=postgres_exporter database=postgres host=/run/postgresql sslmode=disable";
+        # environmentFile = "/root/prometheus-postgres-exporter.env";
       };
+      # nginx?
+      # python?
+      # statsd?
+      # graphite?
     };
 
     scrapeConfigs = [
@@ -164,6 +170,19 @@ in {
         static_configs = [
           {
             targets = ["localhost:${toString config.services.prometheus.exporters.postgres.port}"];
+            labels = {
+              server = hostName;
+            };
+          }
+        ];
+      }
+
+      {
+        job_name = "rdc-website";
+        scrape_interval = "3s";
+        static_configs = [
+          {
+            targets = ["localhost:9200"];
             labels = {
               server = hostName;
             };
@@ -200,7 +219,6 @@ in {
         max_chunk_age = "1h";
         chunk_target_size = 999999;
         chunk_retain_period = "30s";
-        max_transfer_retries = 0;
       };
 
       schema_config = {
@@ -223,7 +241,6 @@ in {
           active_index_directory = "/var/lib/loki/tsdb-active";
           cache_location = "/var/lib/loki/tsdb-shipper-cache";
           cache_ttl = "24h";
-          shared_store = "filesystem";
         };
 
         filesystem = {
@@ -236,13 +253,8 @@ in {
         reject_old_samples_max_age = "168h";
       };
 
-      chunk_store_config = {
-        max_look_back_period = "0s";
-      };
-
       compactor = {
         working_directory = "/var/lib/loki";
-        shared_store = "filesystem";
         compactor_ring = {
           kvstore = {
             store = "inmemory";
@@ -257,11 +269,11 @@ in {
         };
         rule_path = "/var/lib/loki/rules";
         alertmanager_url = "http://localhost";
+        enable_api = true;
         ring = {
           kvstore = {
             store = "inmemory";
           };
-          enable_api = true;
         };
       };
     };
@@ -327,31 +339,37 @@ in {
       {
         name = "grafana";
       }
+      {
+        name = "postgres_exporter";
+      }
     ];
   };
 
-  systemd.services.ensure-db-permissions = {
-    description = "Ensure appropriate users have permissions on rdc_website";
-    wantedBy = ["rdc-website.service"];
-    before = ["rdc-website.service"];
-    requires = ["postgresql.service"];
-    script = ''
-      PSQL="${config.services.postgresql.package}/bin/psql --port=${toString config.services.postgresql.port}"
-      for i in {1..10}; do
-        $PSQL -d postgres -c "" 2> /dev/null && break
-        sleep 0.5
-        if [[ $i -eq 10 ]];then
-          echo "couldn't establish connection to postgres"
-          exit 1
-      fi
-      done
-        $PSQL -tAc 'GRANT USAGE ON SCHEMA public TO grafana'
-        $PSQL -tAc 'GRANT SELECT ON ALL TABLES IN SCHEMA public TO grafana'
-    '';
-    serviceConfig = {
-      type = "oneshot";
-    };
-  };
+  # currently broken. should fix for one-stop rdc monitoring and db setup
+  # systemd.services.ensure-db-permissions = {
+  #   description = "Ensure appropriate users have permissions on rdc_website";
+  #   wantedBy = ["rdc-website.service"];
+  #   before = ["rdc-website.service"];
+  #   requires = ["postgresql.service"];
+  #   script = ''
+  #     PSQL="${config.services.postgresql.package}/bin/psql --port=${toString config.services.postgresql.port}"
+  #     for i in {1..10}; do
+  #       $PSQL -d postgres -c "" 2> /dev/null && break
+  #       sleep 0.5
+  #       if [[ $i -eq 10 ]];then
+  #         echo "couldn't establish connection to postgres"
+  #         exit 1
+  #     fi
+  #     done
+  #       $PSQL -tAc 'GRANT USAGE ON SCHEMA public TO grafana'
+  #       $PSQL -tAc 'GRANT SELECT ON ALL TABLES IN SCHEMA public TO grafana'
+  #       $PSQL -tAc 'CREATE USER postgres_exporter'
+  #       $PSQL -tAc 'GRANT pg_monitor to postgres_exporter'
+  #   '';
+  #   serviceConfig = {
+  #     Type = "oneshot";
+  #   };
+  # };
 
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [80 443];

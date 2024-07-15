@@ -1,44 +1,17 @@
 {
   pkgs,
   config,
+  inputs,
   ...
 }: let
   hostName = "fred";
-
-  rulerConfig = {
-    groups = [
-      {
-        name = "production_rules";
-        limit = 10;
-        interval = "1m";
-        rules = [
-          {
-            alert = "HighPercentageError";
-            expr = ''              sum(rate({app="rdc-website", env="production"} |= "error" [5m])) by (job)
-                          /
-                        sum(rate({app="rdc-website", env="production"}[5m])) by (job)
-                          > 0.05'';
-            for = "10m";
-            annotations.summary = ''High request latency'';
-          }
-
-          {
-            record = "nginx:requests:rate1m";
-            expr = ''
-              sum(
-                rate({container="nginx"}[1m])
-              )'';
-            labels.cluster = "us-central1";
-          }
-        ];
-      }
-    ];
-  };
-  rulerFile = pkgs.writeText "ruler.yml" (builtins.toJSON rulerConfig);
 in {
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
+    inputs.rdc-website.nixosModules.default
+    ../../common/services/rdc-website.nix
+    ../../common/services/observability
   ];
 
   # Bootloader.
@@ -64,6 +37,8 @@ in {
   i18n.defaultLocale = "en_US.UTF-8";
 
   nixpkgs.config.allowUnfree = true;
+
+  nixpkgs.overlays = [inputs.rdc-website.overlays.default];
 
   environment.systemPackages = with pkgs; [
     vim
@@ -92,231 +67,6 @@ in {
         recommendedProxySettings = true;
       };
     };
-  };
-
-  services.grafana = {
-    enable = true;
-    settings.server = {
-      domain = "reddoorcollective.online";
-      http_port = 2342;
-      http_addr = "127.0.0.1";
-    };
-
-    provision = {
-      enable = true;
-      datasources.settings.datasources = [
-        {
-          name = "Prometheus";
-          type = "prometheus";
-          access = "proxy";
-          url = "http://127.0.0.1:${toString config.services.prometheus.port}";
-        }
-        {
-          name = "Loki";
-          type = "loki";
-          access = "proxy";
-          url = "http://127.0.0.1:${toString config.services.loki.configuration.server.http_listen_port}";
-        }
-        {
-          name = "RDC Website Postgres";
-          type = "postgres";
-          url = "/run/postgresql";
-          database = "rdc_website";
-          user = "grafana";
-          jsonData = {
-            postgresVersion = 1500;
-          };
-          # orgId = 1;
-        }
-      ];
-    };
-  };
-
-  services.prometheus = {
-    enable = true;
-    port = 9001;
-    exporters = {
-      node = {
-        enable = true;
-        enabledCollectors = ["systemd"];
-        port = 9002;
-      };
-      postgres = {
-        enable = true;
-        # user = "postgres_exporter";
-        openFirewall = true;
-        dataSourceName = "user=postgres_exporter database=postgres host=/run/postgresql sslmode=disable";
-        # environmentFile = "/root/prometheus-postgres-exporter.env";
-      };
-      # nginx?
-      # python?
-      # statsd?
-      # graphite?
-    };
-
-    scrapeConfigs = [
-      {
-        job_name = hostName;
-        static_configs = [
-          {
-            targets = ["127.0.0.1:${toString config.services.prometheus.exporters.node.port}"];
-          }
-        ];
-      }
-
-      {
-        job_name = "postgres";
-        scrape_interval = "15s";
-        static_configs = [
-          {
-            targets = ["localhost:${toString config.services.prometheus.exporters.postgres.port}"];
-            labels = {
-              server = hostName;
-            };
-          }
-        ];
-      }
-
-      {
-        job_name = "rdc-website";
-        scrape_interval = "3s";
-        static_configs = [
-          {
-            targets = ["localhost:9200"];
-            labels = {
-              server = hostName;
-            };
-          }
-        ];
-      }
-    ];
-  };
-
-  systemd.tmpfiles.rules = [
-    "d /var/lib/loki 0700 loki loki - -"
-    "d /var/lib/loki/ruler 0700 loki loki - -"
-    "L /var/lib/loki/ruler/ruler.yml - - - - ${rulerFile}"
-  ];
-  systemd.services.loki.reloadTriggers = [rulerFile];
-
-  services.loki = {
-    enable = true;
-    configuration = {
-      server.http_listen_port = 3030;
-      auth_enabled = false;
-
-      ingester = {
-        lifecycler = {
-          address = "127.0.0.1";
-          ring = {
-            kvstore = {
-              store = "inmemory";
-            };
-            replication_factor = 1;
-          };
-        };
-        chunk_idle_period = "1h";
-        max_chunk_age = "1h";
-        chunk_target_size = 999999;
-        chunk_retain_period = "30s";
-      };
-
-      schema_config = {
-        configs = [
-          {
-            from = "2024-04-01";
-            store = "tsdb";
-            object_store = "filesystem";
-            schema = "v13";
-            index = {
-              prefix = "index_";
-              period = "24h";
-            };
-          }
-        ];
-      };
-
-      storage_config = {
-        tsdb_shipper = {
-          active_index_directory = "/var/lib/loki/tsdb-active";
-          cache_location = "/var/lib/loki/tsdb-shipper-cache";
-          cache_ttl = "24h";
-        };
-
-        filesystem = {
-          directory = "/var/lib/loki/chunks";
-        };
-      };
-
-      limits_config = {
-        reject_old_samples = true;
-        reject_old_samples_max_age = "168h";
-      };
-
-      compactor = {
-        working_directory = "/var/lib/loki";
-        compactor_ring = {
-          kvstore = {
-            store = "inmemory";
-          };
-        };
-      };
-
-      ruler = {
-        storage = {
-          type = "local";
-          local.directory = "${config.services.loki.dataDir}/ruler";
-        };
-        rule_path = "/var/lib/loki/rules";
-        alertmanager_url = "http://localhost";
-        enable_api = true;
-        ring = {
-          kvstore = {
-            store = "inmemory";
-          };
-        };
-      };
-    };
-    # user, group, dataDir, extraFlags, (configFile)
-  };
-
-  # promtail: port 3031 (8031)
-  #
-  services.promtail = {
-    enable = true;
-    configuration = {
-      server = {
-        http_listen_port = 3031;
-        grpc_listen_port = 0;
-      };
-      positions = {
-        filename = "/tmp/positions.yaml";
-      };
-      clients = [
-        {
-          url = "http://127.0.0.1:${toString config.services.loki.configuration.server.http_listen_port}/loki/api/v1/push";
-        }
-      ];
-      scrape_configs = [
-        {
-          job_name = "journal";
-          journal = {
-            max_age = "12h";
-            labels = {
-              job = "systemd-journal";
-              host = hostName;
-            };
-          };
-          relabel_configs = [
-            {
-              source_labels = ["__journal__systemd_unit"];
-              target_label = "unit";
-            }
-          ];
-        }
-      ];
-    };
-    # extraFlags
   };
 
   security.acme = {

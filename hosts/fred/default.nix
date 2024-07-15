@@ -37,17 +37,6 @@ in {
 
   nixpkgs.config.allowUnfree = true;
 
-  # Enable the OpenSSH daemon.
-  services.openssh = {
-    enable = true;
-    settings = {
-      X11Forwarding = true;
-      PermitRootLogin = "yes";
-      PasswordAuthentication = false;
-    };
-    openFirewall = true;
-  };
-
   services.nginx.enable = true;
   services.red-door-collective.rdc-website.enable = true;
   nixpkgs.overlays = [inputs.rdc-website.overlays.default];

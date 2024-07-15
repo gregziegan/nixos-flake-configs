@@ -12,6 +12,17 @@
   users.defaultUserShell = pkgs.zsh;
   programs.zsh.enable = true;
 
+  # Enable the OpenSSH daemon.
+  services.openssh = {
+    enable = true;
+    settings = {
+      X11Forwarding = true;
+      PermitRootLogin = "yes";
+      PasswordAuthentication = false;
+    };
+    openFirewall = true;
+  };
+
   environment.systemPackages = with pkgs; [
     age
     minisign

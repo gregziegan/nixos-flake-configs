@@ -126,19 +126,8 @@
     };
 
     nixosConfigurations = {
-      fred = mkSystem [
-        ./hosts/fred
-        ({...}: {
-          imports = [
-            rdc-website.nixosModules.default
-            ./common/services/rdc-website.nix
-          ];
-          nixpkgs.overlays = [rdc-website.overlays.default];
-        })
-      ];
-      sankara = mkSystem [
-        ./hosts/sankara
-      ];
+      fred = mkSystem [./hosts/fred];
+      sankara = mkSystem [./hosts/sankara];
     };
 
     darwinConfigurations = rec {

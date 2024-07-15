@@ -28,6 +28,8 @@
       url = "github:nix-community/fenix";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+
+    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
   };
 
   outputs = {
@@ -40,6 +42,7 @@
     devenv,
     fenix,
     darwin,
+    nixos-hardware,
     ...
   } @ inputs: let
     inherit (darwin.lib) darwinSystem;
@@ -124,7 +127,7 @@
 
     nixosConfigurations = {
       fred = mkSystem [./hosts/fred];
-      sankara = mkSystem [./hosts/sankara];
+      sankara = mkSystem [./hosts/sankara nixos-hardware.nixosModules.dell-xps-13-9380];
     };
 
     darwinConfigurations = rec {

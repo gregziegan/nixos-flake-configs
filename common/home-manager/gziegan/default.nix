@@ -40,6 +40,7 @@ in {
       gh
       zellij
       unzip
+      nerdfonts
 
       # Useful nix related tools
       nixpkgs-fmt

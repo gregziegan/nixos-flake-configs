@@ -56,7 +56,7 @@ in {
         scrape_interval = "3s";
         static_configs = [
           {
-            targets = ["localhost:9200"];
+            targets = ["localhost:${toString config.services.red-door-collective.rdc-website.metricsPort}"];
             labels = {
               server = hostName;
             };

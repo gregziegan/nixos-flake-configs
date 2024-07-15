@@ -923,18 +923,18 @@
         "poetry2nix": "poetry2nix_2"
       },
       "locked": {
-        "lastModified": 1720992922,
-        "narHash": "sha256-+93HYIEbXXUpFa0iQ5GDJMHc6UvHzpq/+bTzpKPvWyk=",
-        "ref": "main-deploy",
-        "rev": "9bd376267ddf6dc08cecdcab2595d29cef450e69",
-        "revCount": 718,
-        "type": "git",
-        "url": "file:/Users/gziegan/dev/rdc-website"
+        "lastModified": 1721012316,
+        "narHash": "sha256-iYKFm/j/llplCe2+1Bt3OK7czfDBEN+NBWpULSnDVU8=",
+        "owner": "red-door-collective",
+        "repo": "rdc-website",
+        "rev": "bd27cc6ed9a2eb4ba5fca5bef1d6d8278987f485",
+        "type": "github"
       },
       "original": {
+        "owner": "red-door-collective",
         "ref": "main-deploy",
-        "type": "git",
-        "url": "file:/Users/gziegan/dev/rdc-website"
+        "repo": "rdc-website",
+        "type": "github"
       }
     },
     "root": {

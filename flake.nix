@@ -5,12 +5,9 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     agenix.url = "github:ryantm/agenix";
     deploy-rs.url = "github:serokell/deploy-rs";
-    # rdc-website = {
-    #   url = "github:red-door-collective/rdc-website/main-deploy";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
     rdc-website = {
-      url = "git+file:/Users/gziegan/dev/rdc-website?ref=main-deploy";
+      url = "github:red-door-collective/rdc-website/main-deploy";
+      # url = "git+file:/Users/gziegan/dev/rdc-website?ref=main-deploy";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager = {

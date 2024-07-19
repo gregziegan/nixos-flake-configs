@@ -32,6 +32,7 @@
     btop
     toybox
     vim
+    deploy-rs
   ];
 
   # security.polkit.enable = true;

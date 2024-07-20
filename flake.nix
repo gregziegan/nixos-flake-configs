@@ -7,7 +7,6 @@
     deploy-rs.url = "github:serokell/deploy-rs";
     rdc-website = {
       url = "github:red-door-collective/rdc-website/main-deploy";
-      # url = "git+file:/Users/gziegan/dev/rdc-website?ref=main-deploy";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager = {

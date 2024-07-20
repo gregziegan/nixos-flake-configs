@@ -1,0 +1,1 @@
+nix flake lock --override-input rdc-website "git+file:/Users/gziegan/dev/rdc-website?ref=main-deploy"

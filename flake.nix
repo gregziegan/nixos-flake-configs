@@ -182,11 +182,11 @@
       remoteBuild = true;
 
       hostname = "192.168.86.29";
-      sshUser = "root";
+      sshUser = "gziegan";
       fastConnection = true;
 
       profiles.system = {
-        user = "root";
+        user = "gziegan";
         path =
           deploy-rs.lib.aarch64-darwin.activate.darwin
           self.darwinConfigurations.che;

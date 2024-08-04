@@ -80,12 +80,8 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    vim
-    _1password-gui
-    git
+    chrome
     vscode
-    nixd
-    alejandra
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
